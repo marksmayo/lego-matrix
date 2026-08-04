@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>contact sheet</title>
+<style>
+  html, body { margin: 0; background: #111; }
+  #stage { display: none; }
+  #sheet { display: block; }
+  #subs { display: none; }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/",
+    "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div id="subs"></div>
+<canvas id="sheet" width="1920" height="1620"></canvas>
+<pre id="out" style="color:#6f6"></pre>
+<script type="module" src="./_sheet.js"></script>
+</body>
+</html>

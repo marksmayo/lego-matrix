@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE MATRIX — Opening Sequence, in ABS</title>
+<meta name="description" content="The opening sequence of The Matrix, animated in real time with three.js and rigid-body physics, performed entirely by LEGO minifigures.">
+<link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/",
+    "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+  }
+}
+</script>
+</head>
+<body>
+  <canvas id="stage"></canvas>
+
+  <div class="bar top"></div>
+  <div class="bar bottom"></div>
+
+  <div id="slate">
+    <b id="slate-scene">&nbsp;</b>
+    <span class="tc" id="slate-tc">00:00:00</span>
+  </div>
+
+  <div id="subs"></div>
+
+  <div id="chapters"></div>
+
+  <div id="hint">MOVE THE MOUSE FOR CONTROLS &nbsp;·&nbsp; SPACE = PAUSE &nbsp;·&nbsp; ← → = SKIP</div>
+
+  <div id="transport">
+    <button id="btn-play" title="Play / pause (space)">PAUSE</button>
+    <button id="btn-prev" title="Previous scene">&#124;&#9664;</button>
+    <button id="btn-next" title="Next scene">&#9654;&#124;</button>
+    <div id="scrub">
+      <div class="rail"></div>
+      <div class="fill"></div>
+    </div>
+    <button id="btn-mute" title="Sound">SOUND ON</button>
+    <button id="btn-restart" class="wide" title="Back to the beginning">RESTART</button>
+  </div>
+
+  <div id="boot">
+    <h1>THE MATRIX</h1>
+    <h2>OPENING SEQUENCE &nbsp;·&nbsp; REV. 3/9/98</h2>
+    <div class="blurb">
+      Wake up. <em>Scenes 1 through 11</em> of the Wachowskis' screenplay, staged in real time
+      with <em>three.js</em> and rigid-body physics &mdash; and performed, in full, by
+      <em>minifigures</em>. Bricks are load-bearing. So are the cops.
+      <br><br>
+      Roughly four minutes. Headphones help.
+    </div>
+    <div id="loadbar"><i></i></div>
+    <button id="start">FOLLOW THE WHITE RABBIT <span class="cursor"></span></button>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

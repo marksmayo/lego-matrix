@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>clip check</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/",
+    "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+  }
+}
+</script>
+</head>
+<body style="background:#111;color:#8f8">
+<canvas id="stage" width="64" height="64" style="display:none"></canvas>
+<div id="subs" style="display:none"></div>
+<pre id="out">RUNNING</pre>
+<script type="module" src="./_clip.js"></script>
+</body>
+</html>
