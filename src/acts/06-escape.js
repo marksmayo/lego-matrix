@@ -172,12 +172,12 @@ export default {
         sparks.reset();
         c.post.u.uGreen.value = 0.15;
         c.post.bloom.strength = 0.432;
-        c.audio.bed(true, { root: 62, level: 0.05 });
+        c.audio.cue('chase');
       },
 
       exit(c) {
         c.scene.remove(set.group);
-        c.audio.bed(false);
+        c.audio.cue(null);
       },
 
       reseek(t) { if (t > 5.2) hallPane.visible = false; },

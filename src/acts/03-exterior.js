@@ -171,12 +171,12 @@ export default {
         c.post.u.uGreen.value = 0.15;
         c.post.u.uVignette.value = 1.05;
         c.post.bloom.strength = 0.408;
-        c.audio.bed(true, { root: 46, level: 0.035 });
+        c.audio.cue('agents');
         c.audio.engine(0.05, 30);
       },
 
       exit(c) {
-        c.audio.bed(false);
+        c.audio.cue(null);
         c.audio.stopEngine();
       },
 

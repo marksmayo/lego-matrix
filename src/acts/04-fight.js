@@ -310,13 +310,13 @@ export default {
         c.post.u.uGreen.value = 0.12;
         c.post.u.uVignette.value = 1.2;
         c.post.bloom.strength = 0.48;
-        c.audio.bed(true, { root: 55, level: 0.05 });
+        c.audio.cue('fight');
       },
 
       exit(c) {
         c.scene.remove(set.group);
         c.physics.frozen = false;
-        c.audio.bed(false);
+        c.audio.cue(null);
         c.audio.stopHum();
       },
 
@@ -560,7 +560,7 @@ export default {
           if (skip) return;
           c.audio.whoosh(0.5, 0.3);
           c.audio.hum(0.09, 28);
-          c.audio.bed(false);
+          c.audio.cue('suspend');
         });
         cues.at(FREEZE_B, 'unfreeze', (skip) => {
           if (skip) return;
@@ -573,9 +573,10 @@ export default {
           takeApart(0, c, [5.4, 3.8, 5.2], skip ? 26 : 44, [24, 0, 28]);
           if (!skip) {
             c.audio.crash(0.8);
+            c.audio.sting(1.0);
             c.physics.burst([5.4, 3.8, 5.2], 30, 0.5, 8);
             c.post.u.uWhite.value = 0.42;
-            c.audio.bed(true, { root: 55, level: 0.055 });
+            c.audio.cue('fight');
           }
         });
         // 22 — "a two-hundred-fifty pound sack of limp meat and bone that
@@ -819,7 +820,7 @@ export default {
           if (t > 27.0) r.head.rotation.x = 0.18;   // looking at the floor
         }
 
-        cues.at(25.0, 'quiet', (skip) => { if (!skip) c.audio.bed(false); });
+        cues.at(25.0, 'quiet', (skip) => { if (!skip) c.audio.cue(null); });
         cues.at(25.2, 'shit', (skip) => { if (!skip) c.audio.pulse(0.24); });
         cues.at(27.8, 'torchStop', (skip) => { if (!skip) c.audio.clatter(2, 0.5, 0.06); });
 

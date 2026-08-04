@@ -3,7 +3,8 @@
  * "as though we were on a third line"); in-scene dialogue is white.
  */
 export class Subtitles {
-  constructor(el, lines) {
+  constructor(el, lines, onLine = null) {
+    this.onLine = onLine;
     this.el = el;
     this.lines = [...lines].sort((a, b) => a.t - b.t);
     this.node = document.createElement('div');
@@ -20,7 +21,12 @@ export class Subtitles {
       if (l.t > t) break;
     }
     if (active === this.current) return;
+    const fresh = active && (!this.current || active !== this.current);
     this.current = active;
+    // Fire on the frame a line comes up, so it can be performed as well as
+    // printed. `t - active.t` lets the caller ignore lines it has scrubbed
+    // into halfway through.
+    if (fresh) this.onLine?.(active, t - active.t);
     if (!active) {
       this.node.classList.remove('show');
       return;

@@ -43,15 +43,12 @@ const GradeShader = {
     uniform vec2 uTexel;
     varying vec2 vUv;
 
-    /**
-     * Hash without directional structure.
-     *
-     * The obvious `fract(sin(dot(p, k)) * big)` has isolines along a single
-     * direction, so its "random" values change smoothly along that direction
-     * and abruptly across it — which paints visible diagonal streaks over the
-     * whole frame. This one (Hoskins) mixes all three components together and
-     * has no preferred axis.
-     */
+    // Hash without directional structure.
+    //
+    // The obvious fract(sin(dot(p, k)) * big) has isolines along one direction,
+    // so its "random" values change smoothly along that direction and abruptly
+    // across it — which paints visible diagonal streaks over the whole frame.
+    // This one mixes all three components together and has no preferred axis.
     float hash(vec2 p) {
       vec3 p3 = fract(vec3(p.xyx) * 0.1031);
       p3 += dot(p3, p3.yzx + 33.33);

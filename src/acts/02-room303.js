@@ -62,12 +62,12 @@ export default {
         c.post.u.uGreen.value = 0.13;
         c.post.u.uVignette.value = 1.15;
         c.post.bloom.strength = 0.372;
-        c.audio.bed(true, { root: 49, level: 0.04 });
+        c.audio.cue('creep');
       },
 
       exit(c) {
         c.scene.remove(set.group);
-        c.audio.bed(false);
+        c.audio.cue(null);
         c.post.u.uWhite.value = 0;
       },
 

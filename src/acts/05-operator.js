@@ -113,10 +113,12 @@ export default {
         c.post.u.uGreen.value = 0.14;
         c.post.u.uVignette.value = 1.25;
         c.post.bloom.strength = 0.42;
+        c.audio.cue('operator');
       },
 
       exit(c) {
         c.scene.remove(set.group);
+        c.audio.cue(null);
         if (phone.parent) phone.parent.remove(phone);
       },
 

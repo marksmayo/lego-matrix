@@ -191,12 +191,12 @@ export default {
         c.post.u.uGreen.value = 0.17;
         c.post.u.uVignette.value = 1.0;
         c.post.bloom.strength = 0.396;
-        c.audio.bed(true, { root: 58, level: 0.05 });
+        c.audio.cue('chase');
       },
 
       exit(c) {
         c.scene.fog = null;
-        c.audio.bed(false);
+        c.audio.cue(null);
       },
 
       reseek() {

@@ -202,10 +202,12 @@ export default {
         c.scene.fog = new THREE.FogExp2(0x0a1016, 0.0013);
         c.post.u.uGreen.value = 0.16;
         c.post.bloom.strength = 0.432;
+        c.audio.cue('fall');
       },
 
       exit(c) {
         c.scene.fog = null;
+        c.audio.cue(null);
         c.post.u.uWhite.value = 0;
       },
 

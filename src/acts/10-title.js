@@ -178,9 +178,11 @@ export default {
         c.post.u.uAberr.value 	= 1.4;
         c.post.bloom.strength = 0.69;
         curtain.opacity = 0;
+        c.audio.cue('title');
       },
 
       exit(c) {
+        c.audio.cue(null);
         c.post.u.uScan.value = 0;
         c.post.u.uGreen.value = 0.16;
         c.post.bloom.strength = 0.432;

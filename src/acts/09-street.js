@@ -210,12 +210,12 @@ export default {
         c.post.u.uGreen.value = 0.16;
         c.post.u.uVignette.value = 1.1;
         c.post.bloom.strength = 0.468;
-        c.audio.bed(true, { root: 44, level: 0.045 });
+        c.audio.cue('street');
       },
 
       exit(c) {
         c.scene.fog = null;
-        c.audio.bed(false);
+        c.audio.cue(null);
         c.audio.stopEngine();
         c.post.u.uWhite.value = 0;
       },
@@ -316,7 +316,7 @@ export default {
         // "There is a frozen instant of silence before the hulking mass of
         // dark metal lurches up onto the sidewalk."
         cues.at(16.75, 'frozen', (skip) => {
-          if (!skip) { c.audio.silence(0.62); c.audio.bed(false); }
+          if (!skip) { c.audio.silence(0.62); c.audio.cue(null); }
         });
 
         /* ---------- impact ---------- */

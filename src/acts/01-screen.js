@@ -88,6 +88,7 @@ export default {
         screen.cursorOn = true;
         screen.digits = null;
         c.audio.startRing();
+        c.audio.cue('terminal');
       },
 
       exit(c) {
@@ -99,6 +100,7 @@ export default {
         c.post.bloom.strength = 0.432;
         c.audio.stopRing();
         c.audio.stopHum();
+        c.audio.cue(null);
       },
 
       /** Rebuild the terminal state after a scrub. */

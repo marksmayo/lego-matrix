@@ -5,6 +5,8 @@
  * a floor, and a low pulse underneath it all. All of that is oscillators.
  */
 
+import { Score } from './score.js';
+
 export class Audio {
   constructor() {
     this.ready = false;
@@ -35,6 +37,7 @@ export class Audio {
     const d = this.noiseBuf.getChannelData(0);
     for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
 
+    this.score = new Score(this);
     this.ready = true;
   }
 
@@ -288,27 +291,18 @@ export class Audio {
     this.tone(41, { type: 'sine', a: 0.01, d: 0.3, r: 0.5, peak, glide: 27 });
   }
 
-  /** Two-note ostinato with a filtered pad, started and stopped by acts. */
-  bed(on, { root = 55, level = 0.055 } = {}) {
+  /**
+   * Play a named score cue (see score.js). Cues crossfade; passing null stops
+   * the music without touching the effects bus.
+   */
+  cue(name, opts) {
     if (!this.ready) return;
-    if (on && !this.bedTimer) {
-      let step = 0;
-      const tick = () => {
-        if (!this.bedTimer) return;
-        const n = [0, 0, 3, 0, 0, 0, -2, 0][step % 8];
-        const f = root * Math.pow(2, n / 12);
-        this.tone(f, { type: 'triangle', a: 0.03, d: 0.4, r: 0.6, peak: level });
-        this.tone(f * 2.005, { type: 'sine', a: 0.05, d: 0.4, r: 0.5, peak: level * 0.4 });
-        if (step % 4 === 0) this.pulse(level * 2.2);
-        step++;
-        this.bedTimer = setTimeout(tick, 700);
-      };
-      this.bedTimer = 1;
-      tick();
-    } else if (!on && this.bedTimer) {
-      clearTimeout(this.bedTimer);
-      this.bedTimer = null;
-    }
+    this.score.play(name, opts);
+  }
+
+  /** A single scored hit, for a cut or an impact. */
+  sting(power = 1) {
+    if (this.ready) this.score.hit(power);
   }
 
   /** Panic strings substitute: a rising cluster. Used for the leap. */
@@ -336,6 +330,6 @@ export class Audio {
     this.stopRing();
     this.stopHum();
     this.stopEngine();
-    this.bed(false);
+    this.score?.stop();
   }
 }
