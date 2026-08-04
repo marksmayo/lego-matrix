@@ -175,7 +175,7 @@ export default {
         c.post.u.uGreen.value = 0.42;
         c.post.u.uVignette.value = 1.3;
         c.post.u.uScan.value = 0.25;
-        c.post.u.uAberr.value 	= 1.4;
+        c.post.u.uAberr.value = 0.7;
         c.post.bloom.strength = 0.69;
         curtain.opacity = 0;
         c.audio.cue('title');

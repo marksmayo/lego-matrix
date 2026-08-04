@@ -868,14 +868,14 @@ export default {
           fightRim.target.position.set(APEX.x, APEX.y + 2.2, APEX.z);
           // No handheld and no shake: the operator is the only thing moving.
           c.post.u.uVignette.value = 1.2 + o * 0.45;
-          c.post.u.uAberr.value = 1.0 + Math.sin(o * Math.PI) * 2.2;
+          c.post.u.uAberr.value = 0.22 + Math.sin(o * Math.PI) * 1.1;
           c.post.bloom.strength = 0.34 + Math.sin(o * Math.PI) * 0.16;
         } else {
           camKeys(c.camera, t, CAM, target);
           const chaos = (t > 2.9 && t < 25) ? 0.12 : 0.03;
           shake(c.camera, chaos, t, 16);
           c.post.u.uVignette.value = 1.2;
-          c.post.u.uAberr.value = 1.0;
+          c.post.u.uAberr.value = 0.22;
           c.post.bloom.strength = 0.48 + seg(t, 15.6, 18.4) * 0.18 * (1 - seg(t, 20.9, 22.5));
         }
 

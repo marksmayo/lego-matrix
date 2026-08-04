@@ -24,9 +24,9 @@ const GradeShader = {
     uScan: { value: 0.0 },        // scanlines: 1 while we're inside the CRT
     uFade: { value: 0.0 },        // 1 = full black
     uWhite: { value: 0.0 },       // 1 = full white (glass, muzzle flash)
-    uAberr: { value: 0.45 },
+    uAberr: { value: 0.22 },
     uGrain: { value: 0.016 },
-    uSharpen: { value: 0.32 },
+    uSharpen: { value: 0.22 },
     uTexel: { value: new THREE.Vector2(1 / 1920, 1 / 1080) },
     uAspect: { value: 1.777 },
   },

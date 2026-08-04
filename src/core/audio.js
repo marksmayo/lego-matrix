@@ -41,7 +41,10 @@ export class Audio {
     this.ready = true;
   }
 
-  resume() { if (this.ctx?.state === 'suspended') this.ctx.resume(); }
+  resume() {
+    if (this.ctx?.state === 'suspended') this.ctx.resume();
+    this.score?.resume();
+  }
 
   setMuted(m) {
     this.muted = m;

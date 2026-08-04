@@ -5,8 +5,9 @@ staged as a real-time animation in the browser with **three.js** and
 **cannon-es** rigid-body physics — and performed entirely by LEGO
 minifigures.
 
-Runtime is about **4 minutes 13 seconds**, in ten scenes, with the screenplay's
-dialogue as subtitles and every sound synthesised in the browser.
+Runtime is about **4 minutes 25 seconds**, in ten scenes. The screenplay's
+dialogue is both captioned and performed, the score is original, and every
+sound is synthesised in the browser.
 
 ## Running it
 
@@ -36,6 +37,8 @@ no audio files. Everything you see and hear is generated at startup.
 | **Minifigures** | Correctly proportioned and correctly limited: rotation at hips, shoulders and neck, no knees, no wrists, no elbows. All the choreography is built from what a minifig can actually do — which is why the fight lands its hits on cuts. |
 | **Physics** | The door of Room 303, four police officers, a hall window, a stairwell window and one telephone booth all come apart into their component parts, each with its own rigid body. Gravity is tuned (−420 u/s² rather than the geometrically correct −1226) so plastic falls like plastic on camera. |
 | **Sound** | Web Audio only: the 440 + 480 Hz US ring cadence, a 1998 modem handshake, gunfire, a diesel engine, tyre squeal, breaking glass, and the bandpassed clicks of ABS hitting concrete. |
+| **Voices** | Every line is spoken through the browser's own speech synthesiser. Each character has a fixed casting decision — which installed voice, and a baseline pitch, rate and volume — and each line carries an acting note (`urgent`, `cold`, `shout`, `weary`, `dread`) that modifies it. No actor is imitated and no audio is shipped. |
+| **Score** | Ten original cues in `core/score.js`, one per scene, as a 16-step sequencer over the same master bus: sustained drones, an industrial pulse, tritone stabs, a driving sixteenth ostinato for the fight, and one held low note for the bullet-time. Written in the idiom; nothing transcribed. |
 | **Grade** | Bloom, then a custom pass for the green cast in the shadows, radial chromatic aberration, vignette, grain, and scanlines while we're inside the screen. |
 
 ## Structure
@@ -57,7 +60,9 @@ src/
     physics.js        cannon-es world, part release, shatterInto()
     anim.js           easing, keyframed camera, seek-safe one-shot cues
     actor.js          blocking helpers: move, jump, follow, driveAlong
-    audio.js          the entire soundtrack, as oscillators
+    audio.js          effects, engines, ring cadences — all oscillators
+    score.js          ten original cues on a 16-step sequencer
+    voices.js         casting and acting notes for the speech synthesiser
     subtitles.js
   fx/
     rain.js           the CRT canvas, and the glyph volume behind it
@@ -69,7 +74,7 @@ src/
     01-screen.js      1  ON COMPUTER SCREEN
     02-room303.js     2  INT. HEART O' THE CITY HOTEL
     03-exterior.js    3  EXT. HEART O' THE CITY HOTEL
-    04-fight.js       4  the arrest goes wrong
+    04-fight.js       4  the arrest goes wrong (shots 11-41 of the sheet)
     05-operator.js    6  Trinity calls the Operator
     06-escape.js      7  INT. HALL / 8 EXT. FIRE ESCAPE
     07-roof.js        9  EXT. ROOF — the 40-foot jump
@@ -84,6 +89,36 @@ animation is a pure function of act-local time, so any moment can be scrubbed to
 and any scene replayed. One-shot events (a door exploding, a booth being
 demolished) run through a cue scheduler that fires them silently when you seek
 past them, so state stays consistent without replaying the fireworks.
+
+## Scene 4, and the shot sheet
+
+The 303 fight is the one scene built from a shot list rather than from prose,
+because the screenplay covers it in two paragraphs and the film covers it in
+thirty-one shots. Working from the opening's 43-shot / 92-panel camera
+worksheet, scene 4 runs thirty seconds and follows shots 11 to 41 in order:
+the cuffs, her eyes, the spin, **the arm**, the nose, the scream, the
+anticipation, **the suspended kick**, the feet, the cop flying back into
+another cop, **the chair**, the gun, **the wall run**, the landing, the grab
+and spin, the shot, the last kick, and the long down shot where she turns to
+look at what she has done.
+
+Two of those needed capabilities the rest of the piece didn't have:
+
+- **Shot 19, the suspended kick** (3.4 seconds — three times the length of
+  anything around it, and the first bullet-time shot in the film). The physics
+  solver takes a `frozen` flag: every loose brick in the room stops exactly
+  where it is while the camera walks 200° around her, rising the whole way. The
+  practicals stop flickering too, because a held frame that still flickers
+  reads as a stutter rather than as stopped time. A rim light tracks opposite
+  the lens for the entire orbit — a minifigure moulded in black on a dark set
+  has no silhouette otherwise.
+- **Shots 28–31, the wall run.** `orient()` in `core/actor.js` builds a
+  figure's orientation from a basis rather than a yaw, which is the only way to
+  stand a minifigure sideways on a wall. Gravity is a suggestion.
+
+And the film's "breaks arm" is played completely straight, because a minifigure
+has no elbows and cannot throw a punch: the arm comes off, and the officer
+looks at where it used to be.
 
 ## Notes on the adaptation
 
@@ -118,6 +153,19 @@ chrome --headless=new --disable-gpu --virtual-time-budget=900000 \
   --dump-dom http://localhost:8123/_smoke.html
 ```
 
+**`_clip.html`** steps the timeline and tests every visible figure's feet and
+torso against that scene's own static colliders, reporting the worst sink,
+float and wall-penetration per figure per scene. Analytic rather than raycast
+on purpose: a brick wall is one InstancedMesh with hundreds of instances, and
+raycasting thousands of samples against those costs minutes. It is what caught
+the systematic bug where `tiledFloor` placed tiles' *undersides* at the
+requested height, so every figure in every scene stood one plate deep in the
+floor:
+
+```bash
+chrome --headless=new --disable-gpu --virtual-time-budget=900000   --dump-dom http://localhost:8123/_clip.html
+```
+
 **`_sheet.html`** renders a contact sheet of key frames into one image, which
 is the only practical way to judge staging without watching four minutes in
 real time. It warms each cell up from its act's first frame, so physics debris
@@ -139,6 +187,8 @@ parked on top of its own close-up.
 
 ## Credits
 
-Screenplay by Larry & Andy Wachowski, Rev. 3/9/98. This is a non-commercial
+Screenplay by Larry & Andy Wachowski, Rev. 3/9/98. Scene 4's shot order and
+camera moves follow the opening sequence's published 43-shot camera worksheet.
+All music is original to this project. This is a non-commercial
 fan animation. LEGO is a trademark of the LEGO Group, which does not sponsor,
 authorise or endorse it.

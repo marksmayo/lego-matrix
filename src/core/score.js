@@ -169,7 +169,15 @@ export class Score {
     this.startClock();
   }
 
-  stop() { this.play(null); }
+  stop() {
+    if (this.cueName) this.lastName = this.cueName;
+    this.play(null);
+  }
+
+  /** Restart whatever was playing before the last stop (i.e. after a pause). */
+  resume() {
+    if (this.lastName && !this.cueName) this.play(this.lastName, { level: this.level });
+  }
 
   startClock() {
     if (this.timer) return;

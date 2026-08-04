@@ -410,7 +410,7 @@ export default {
         const slow = (t > 15.3 && t < 17.9) ? Math.sin(seg(t, 15.3, 17.9) * Math.PI) : 0;
         c.post.bloom.strength = 0.396 + slow * 0.3;
         c.post.u.uVignette.value = 1.0 + slow * 0.5;
-        c.post.u.uAberr.value = 1.0 + slow * 2.4;
+        c.post.u.uAberr.value = 0.22 + slow * 1.2;
 
         sparks.update(dt);
         smoke.update(dt);

@@ -79,7 +79,7 @@ export default {
       enter(c) {
         c.post.u.uScan.value = 1;
         c.post.u.uGreen.value = 0.55;
-        c.post.u.uAberr.value = 1.7;
+        c.post.u.uAberr.value = 0.9;
         c.post.u.uVignette.value = 1.25;
         c.post.u.uGrain.value = 0.075;
         c.post.bloom.strength = 0.63;
@@ -94,7 +94,7 @@ export default {
       exit(c) {
         c.post.u.uScan.value = 0;
         c.post.u.uGreen.value = 0.16;
-        c.post.u.uAberr.value = 1.0;
+        c.post.u.uAberr.value = 0.22;
         c.post.u.uGrain.value = 0.055;
         c.post.u.uWhite.value = 0;
         c.post.bloom.strength = 0.432;
@@ -155,7 +155,7 @@ export default {
         const roar = seg(t, 26, 62);
         c.audio.hum(0.03 + roar * roar * 0.5, 44 + roar * 26);
         c.post.u.uScan.value = 1 - seg(t, 56, 59.2) * 0.88;
-        c.post.u.uAberr.value = 1.7 + seg(t, 55, 62) * 5;
+        c.post.u.uAberr.value = 0.9 + seg(t, 55, 62) * 2.6;
         c.post.u.uGreen.value = 0.55 + seg(t, 50, 60) * 0.3;
         c.post.bloom.strength = 0.63 + seg(t, 48, 62) * 0.2;
 
