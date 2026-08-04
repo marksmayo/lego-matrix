@@ -156,7 +156,7 @@ export function hotelSet() {
   moon.shadow.bias = -0.0016;
   group.add(moon, moon.target);
 
-  const ambient = new THREE.HemisphereLight(0x2a3a4a, 0x0a0c0e, 2.1);
+  const ambient = new THREE.HemisphereLight(0x2a3a4a, 0x0a0c0e, 2.7);
   group.add(ambient);
 
   const windowGlow = new THREE.PointLight(0x8fb4ff, 110, 40, 2);

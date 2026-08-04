@@ -75,13 +75,14 @@ export default {
 
     return {
       group, cues, screen, field, plane,
+      // The only scene that wants visible grain: it is a 1998 CRT.
+      grainScale: 2.4,
 
       enter(c) {
         c.post.u.uScan.value = 1;
         c.post.u.uGreen.value = 0.55;
         c.post.u.uAberr.value = 0.9;
         c.post.u.uVignette.value = 1.25;
-        c.post.u.uGrain.value = 0.075;
         c.post.bloom.strength = 0.63;
         screen.clearLines();
         screen.rainLevel = 0;
@@ -95,7 +96,6 @@ export default {
         c.post.u.uScan.value = 0;
         c.post.u.uGreen.value = 0.16;
         c.post.u.uAberr.value = 0.22;
-        c.post.u.uGrain.value = 0.055;
         c.post.u.uWhite.value = 0;
         c.post.bloom.strength = 0.432;
         c.audio.stopRing();

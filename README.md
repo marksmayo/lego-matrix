@@ -1,5 +1,7 @@
 # THE MATRIX — opening sequence, in ABS
 
+**▶ Live: <https://marksmayo.github.io/lego-matrix/>**
+
 Scenes 1 through 11 of the Wachowskis' screenplay (`opening.md`, Rev. 3/9/98),
 staged as a real-time animation in the browser with **three.js** and
 **cannon-es** rigid-body physics — and performed entirely by LEGO
@@ -21,6 +23,10 @@ python -m http.server 8000
 
 then open <http://localhost:8000>.
 
+The published copy at <https://marksmayo.github.io/lego-matrix/> is served
+straight from the root of the `lego-matrix` repository, which mirrors this
+folder; its Pages workflow redeploys on every push to `main`.
+
 three.js and cannon-es load from unpkg via an import map, so the first load
 needs a network connection. Nothing else is fetched — no textures, no models,
 no audio files. Everything you see and hear is generated at startup.
@@ -37,7 +43,7 @@ no audio files. Everything you see and hear is generated at startup.
 | **Minifigures** | Correctly proportioned and correctly limited: rotation at hips, shoulders and neck, no knees, no wrists, no elbows. All the choreography is built from what a minifig can actually do — which is why the fight lands its hits on cuts. |
 | **Physics** | The door of Room 303, four police officers, a hall window, a stairwell window and one telephone booth all come apart into their component parts, each with its own rigid body. Gravity is tuned (−420 u/s² rather than the geometrically correct −1226) so plastic falls like plastic on camera. |
 | **Sound** | Web Audio only: the 440 + 480 Hz US ring cadence, a 1998 modem handshake, gunfire, a diesel engine, tyre squeal, breaking glass, and the bandpassed clicks of ABS hitting concrete. |
-| **Voices** | Every line is spoken through the browser's own speech synthesiser. Each character has a fixed casting decision — which installed voice, and a baseline pitch, rate and volume — and each line carries an acting note (`urgent`, `cold`, `shout`, `weary`, `dread`) that modifies it. No actor is imitated and no audio is shipped. |
+| **Voices** | Every line is spoken through the browser's own speech synthesiser. Only one line is ever in the air: `speak()` queues by default, which in a dense scene puts the whole act behind the picture until the scene change cancels the backlog — that is why the Lieutenant and the entire phone call to the Operator were originally silent. Each character has a fixed casting decision — which installed voice, and a baseline pitch, rate and volume — and each line carries an acting note (`urgent`, `cold`, `shout`, `weary`, `dread`) that modifies it. No actor is imitated and no audio is shipped. |
 | **Score** | Ten original cues in `core/score.js`, one per scene, as a 16-step sequencer over the same master bus: sustained drones, an industrial pulse, tritone stabs, a driving sixteenth ostinato for the fight, and one held low note for the bullet-time. Written in the idiom; nothing transcribed. |
 | **Grade** | Bloom, then a custom pass for the green cast in the shadows, radial chromatic aberration, vignette, grain, and scanlines while we're inside the screen. |
 
@@ -67,6 +73,9 @@ src/
   fx/
     rain.js           the CRT canvas, and the glyph volume behind it
     particles.js      tracers, muzzle flashes, sparks, smoke, light cones
+                      (smoke is an accent on an impact, never an atmosphere:
+                       live sprite count is rate x lifetime, and a few dozen
+                       overlapping camera-facing quads read as a fogged lens)
     post.js           bloom + grade chain
   sets/
     hotel.js          Room 303 and the burnt corridor, shared by four acts
@@ -152,6 +161,15 @@ then seeks backwards into each scene, reporting any error per scene:
 chrome --headless=new --disable-gpu --virtual-time-budget=900000 \
   --dump-dom http://localhost:8123/_smoke.html
 ```
+
+**`_voicecheck.html`** replaces `speechSynthesis` with a stub that models the
+two behaviours that actually broke dialogue — utterances queue, and `cancel()`
+discards everything still queued — then plays the whole timeline through the
+real subtitle and voice path and reports which lines were spoken, which were
+dropped, and with what pitch, rate and volume. Headless Chrome ships no voices,
+so it cannot prove audio comes out; it proves every line reaches the synth on
+its own cue. **`_audition.html`** is the other half: open it in a real browser
+to hear every line, per character, and see which installed voice each one got.
 
 **`_clip.html`** steps the timeline and tests every visible figure's feet and
 torso against that scene's own static colliders, reporting the worst sink,

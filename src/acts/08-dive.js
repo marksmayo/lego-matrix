@@ -69,7 +69,7 @@ export default {
     const cues = new Cues();
     const target = new THREE.Vector3();
     const sparks = new Sparks(group, { max: 420, size: 0.26 });
-    const smoke = new Smoke(group, { pool: 14, color: 0x8b8578, size: 8 });
+    const smoke = new Smoke(group, { pool: 8, color: 0x8b8578, size: 6 });
     const rand = rng(2020);
 
     /* ---------------- the roof she leaves ---------------- */
@@ -267,7 +267,7 @@ export default {
           c.audio.glass();
           c.audio.crash(0.9);
           sparks.emit(WIN.clone(), 50, { speed: 26, color: [0.85, 0.95, 1.0], ttl: 0.7, up: 0.4 });
-          smoke.puff(WIN.clone().add(new THREE.Vector3(0, 0, -3)), { dur: 4, size: 8, vy: 1.2, opacity: 0.3 });
+          smoke.puff(WIN.clone().add(new THREE.Vector3(0, 0, -3)), { dur: 4, size: 6, vy: 1.2, opacity: 0.11 });
           c.post.u.uWhite.value = 0.5;
         });
 
@@ -375,9 +375,9 @@ export default {
         cues.at(12.6, 'wind2', (skip) => { if (!skip) c.audio.whoosh(3.0, 0.07); });
         cues.at(13.6, 'getUp', (skip) => { if (!skip) c.audio.pulse(0.34); });
 
-        if (t > 5.4 && Math.random() < dt * 3) {
+        if (t > 5.4 && Math.random() < dt * 0.8) {
           smoke.puff(new THREE.Vector3((Math.random() - 0.5) * 6, 16 + Math.random() * 12, -18 - Math.random() * 10), {
-            dur: 7, size: 7, vy: 0.5, opacity: 0.09,
+            dur: 4.5, size: 6, vy: 0.5, opacity: 0.05,
           });
         }
 

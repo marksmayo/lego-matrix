@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>voice audition</title>
+<style>
+  body { background:#0a0f0c; color:#8effb8; font:13px ui-monospace,monospace; padding:24px; }
+  h1 { font-size:15px; letter-spacing:.2em; font-weight:500; }
+  table { border-collapse:collapse; margin:18px 0; }
+  td, th { padding:5px 12px; border-bottom:1px solid #1a3a26; text-align:left; vertical-align:top; }
+  th { color:#3f8a5e; font-weight:400; letter-spacing:.12em; }
+  button { background:#0d2418; color:#8effb8; border:1px solid #1e5334; font:12px ui-monospace,monospace;
+           padding:5px 10px; cursor:pointer; border-radius:3px; }
+  button:hover { background:#1c4a30; }
+  .line { color:#cfe; }
+  .em { color:#5fbf88; }
+  #voices { color:#4f9f72; white-space:pre-wrap; margin-top:20px; font-size:12px; }
+  #big { padding:10px 18px; letter-spacing:.16em; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.169.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+<h1>VOICE AUDITION</h1>
+<p>Every line, as it will be performed. Click a character to hear all of their
+lines back to back, or a single line to hear just that one.</p>
+<button id="big">PLAY EVERY LINE IN ORDER</button>
+<div id="cast"></div>
+<div id="voices"></div>
+
+<script type="module">
+import { Voices } from './src/core/voices.js';
+import { DIALOGUE } from './src/script.js';
+
+const voices = new Voices();
+voices.init();
+
+// The audition wants to hear a whole run, so let lines queue here rather than
+// cutting each other off the way they do against picture.
+voices.schedule = (fn) => { fn(); return null; };
+const speakQueued = (line) => {
+  const saved = voices.enqueue;
+  voices.enqueue = (u) => { try { speechSynthesis.speak(u); } catch {} };
+  voices.speak(line);
+  voices.enqueue = saved;
+};
+
+const byWho = new Map();
+for (const l of DIALOGUE) {
+  if (!byWho.has(l.who)) byWho.set(l.who, []);
+  byWho.get(l.who).push(l);
+}
+
+function render() {
+  const cast = voices.casting();
+  const seen = new Set(byWho.keys());
+  let html = '<table><tr><th>character</th><th>installed voice</th><th>pitch</th><th>rate</th><th>lines</th><th></th></tr>';
+  for (const c of cast) {
+    if (!seen.has(c.who)) continue;
+    html += `<tr><td>${c.who}</td><td>${c.voice}</td><td>${c.pitch}</td><td>${c.rate}</td>`
+      + `<td>${byWho.get(c.who).length}</td>`
+      + `<td><button data-who="${c.who}">play all</button></td></tr>`;
+  }
+  html += '</table>';
+
+  for (const [who, lines] of byWho) {
+    html += `<div style="margin:14px 0 4px;color:#3f8a5e">${who}</div>`;
+    for (const l of lines) {
+      const i = DIALOGUE.indexOf(l);
+      html += `<div><button data-line="${i}">▶</button> `
+        + `<span class="em">${l.emote || 'neutral'}</span> `
+        + `<span class="line">${l.text.replace(/</g, '&lt;')}</span></div>`;
+    }
+  }
+  document.getElementById('cast').innerHTML = html;
+
+  document.getElementById('voices').textContent =
+    `${voices.voices.length} voices installed:\n`
+    + voices.voices.map((v) => `  ${v.name}  [${v.lang}]`).join('\n');
+
+  document.querySelectorAll('button[data-who]').forEach((b) => {
+    b.onclick = () => {
+      speechSynthesis.cancel();
+      for (const l of byWho.get(b.dataset.who)) speakQueued(l);
+    };
+  });
+  document.querySelectorAll('button[data-line]').forEach((b) => {
+    b.onclick = () => {
+      speechSynthesis.cancel();
+      speakQueued(DIALOGUE[+b.dataset.line]);
+    };
+  });
+}
+
+document.getElementById('big').onclick = () => {
+  speechSynthesis.cancel();
+  for (const l of DIALOGUE) speakQueued(l);
+};
+
+render();
+// The voice list arrives asynchronously in Chrome.
+speechSynthesis.addEventListener?.('voiceschanged', () => { voices.init(); render(); });
+setTimeout(() => { voices.init(); render(); }, 600);
+</script>
+</body>
+</html>

@@ -45,7 +45,7 @@ export default {
     const group = new THREE.Group();
     const cues = new Cues();
     const target = new THREE.Vector3();
-    const smoke = new Smoke(group, { pool: 18, color: 0x9aa8a4, size: 9 });
+    const smoke = new Smoke(group, { pool: 8, color: 0x9aa8a4, size: 6 });
 
     /* ---------------- the block ---------------- */
     const hotel = facade(120, 40, {
@@ -186,9 +186,9 @@ export default {
         sign.userData.light.intensity = 70 + noise1(t * 4) * 30;
 
         // Steam from the vents, because it is 1998 and this is a city street.
-        if (Math.random() < dt * 1.6) {
+        if (Math.random() < dt * 0.5) {
           smoke.puff(new THREE.Vector3(-16 + Math.random() * 6, 0.4, 8 + Math.random() * 6), {
-            dur: 6, size: 8, vy: 2.2, opacity: 0.13, spread: 0.8,
+            dur: 4.5, size: 6, vy: 2.2, opacity: 0.072, spread: 0.8,
           });
         }
 

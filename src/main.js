@@ -4,6 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { Physics } from './core/physics.js';
 import { Audio } from './core/audio.js';
 import { Subtitles } from './core/subtitles.js';
+import { Voices } from './core/voices.js';
 import { makePost } from './fx/post.js';
 import { DIALOGUE, CHAPTERS, RUNTIME } from './script.js';
 import { clamp } from './core/anim.js';
@@ -56,9 +57,14 @@ pmrem.dispose();
 const physics = new Physics(scene);
 const audio = new Audio();
 const post = makePost(renderer, scene, camera);
-const subs = new Subtitles(document.getElementById('subs'), DIALOGUE);
+const voices = new Voices();
+// Only perform a line if we have arrived at it in play, not scrubbed into the
+// middle of it, and not while paused.
+const subs = new Subtitles(document.getElementById('subs'), DIALOGUE, (line, into) => {
+  if (playing && into < 0.4) voices.speak(line);
+});
 
-const ctx = { scene, camera, renderer, physics, audio, post, subs, THREE };
+const ctx = { scene, camera, renderer, physics, audio, post, subs, voices, THREE };
 
 /* ------------------------------------------------------------------ */
 /* the director                                                        */
@@ -69,6 +75,10 @@ let current = -1;
 let time = 0;
 let playing = false;
 let started = false;
+// Grain is a taste call, so it is a toggle rather than a constant. Acts that
+// want more of it (the CRT) scale from this base.
+let grainStep = 1;
+let grainBase = 0.005;
 
 function buildAct(i) {
   if (built.has(i)) return built.get(i);
@@ -96,6 +106,7 @@ function mount(i) {
   }
   physics.reset();
   audio.quiet();
+  voices.cancel();
   subs.clear();
   current = i;
   const inst = buildAct(i);
@@ -107,6 +118,7 @@ function mount(i) {
 }
 
 function seek(t) {
+  voices.cancel();
   time = clamp(t, 0, RUNTIME - 0.05);
   mount(actIndexAt(time));
   const inst = built.get(current);
@@ -145,6 +157,8 @@ function frame() {
 
   inst.cues?.tick(local);
   inst.update(local, dt, ctx);
+  // Grain is owned here so the toggle always wins; acts only scale it.
+  post.u.uGrain.value = grainBase * (inst.grainScale ?? 1);
   physics.step(dt);
   subs.update(time);
 
@@ -200,7 +214,7 @@ function togglePlay(force) {
   if (playing && time >= RUNTIME - 0.01) time = 0;
   btnPlay.textContent = playing ? 'PAUSE' : 'PLAY';
   if (playing) audio.resume();
-  else audio.quiet();
+  else { audio.quiet(); voices.cancel(); }
 }
 
 btnPlay.onclick = () => togglePlay();
@@ -212,6 +226,7 @@ btnNext.onclick = () => seek(ACTS[Math.min(ACTS.length - 1, current + 1)].start 
 btnRestart.onclick = () => { seek(0); togglePlay(true); };
 btnMute.onclick = () => {
   audio.setMuted(!audio.muted);
+  voices.setMuted(audio.muted);
   btnMute.textContent = audio.muted ? 'SOUND OFF' : 'SOUND ON';
 };
 
@@ -231,6 +246,12 @@ addEventListener('keydown', (e) => {
   else if (e.code === 'ArrowLeft') btnPrev.onclick();
   else if (e.key === 'm') btnMute.onclick();
   else if (e.key === 'r') btnRestart.onclick();
+  else if (e.key === 'g') {
+    // Film grain: off, subtle, or more than you probably want.
+    grainStep = (grainStep + 1) % 3;
+    grainBase = [0, 0.005, 0.013][grainStep];
+    post.u.uGrain.value = grainBase;
+  }
 });
 
 let idleTimer = null;
@@ -301,6 +322,7 @@ startBtn.onclick = async () => {
   if (startBtn.disabled) return;
   audio.init();
   audio.resume();
+  voices.init();
   boot.classList.add('gone');
   setTimeout(() => { boot.style.display = 'none'; }, 750);
   started = true;

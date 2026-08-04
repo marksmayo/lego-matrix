@@ -57,7 +57,7 @@ export default {
     const cues = new Cues();
     const target = new THREE.Vector3();
     const sparks = new Sparks(group, { max: 300, size: 0.24 });
-    const smoke = new Smoke(group, { pool: 10, color: 0x8a9088, size: 7 });
+    const smoke = new Smoke(group, { pool: 6, color: 0x8a9088, size: 5 });
     const rand = rng(717);
 
     /* ---------------- the end of the hall ---------------- */
@@ -297,9 +297,9 @@ export default {
         cues.at(8.4, 'seeSmith', (skip) => { if (!skip) c.audio.pulse(0.42); });
         cues.at(10.6, 'up', (skip) => { if (!skip) c.audio.riser(2.6); });
 
-        if (Math.random() < dt * 1.2) {
+        if (Math.random() < dt * 0.5) {
           smoke.puff(new THREE.Vector3(ALLEY_X + 6 + Math.random() * 4, 0.5, 20 + Math.random() * 4), {
-            dur: 6, size: 7, vy: 2.4, opacity: 0.12,
+            dur: 4.5, size: 6, vy: 2.4, opacity: 0.066,
           });
         }
 

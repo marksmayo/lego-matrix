@@ -25,7 +25,7 @@ const GradeShader = {
     uFade: { value: 0.0 },        // 1 = full black
     uWhite: { value: 0.0 },       // 1 = full white (glass, muzzle flash)
     uAberr: { value: 0.22 },
-    uGrain: { value: 0.016 },
+    uGrain: { value: 0.005 },
     uSharpen: { value: 0.22 },
     uTexel: { value: new THREE.Vector2(1 / 1920, 1 / 1080) },
     uAspect: { value: 1.777 },
@@ -95,9 +95,19 @@ const GradeShader = {
       // Vignette.
       col *= mix(1.0, smoothstep(1.08, 0.16, r2 * 1.3), uVignette);
 
-      // Film grain: fine, monochrome, and animated per frame.
+      /*
+       * Film grain, weighted by exposure.
+       *
+       * Added as a flat offset it is invisible in a lit frame and a boiling
+       * mess in a dark one: this piece is almost entirely night interiors
+       * sitting at two or three per cent brightness, where ±0.004 is a twenty
+       * per cent swing. Real grain is densest in the mid-tones and falls away
+       * in both the blacks and the highlights, so weight it that way and the
+       * black corridor stays black.
+       */
       float g = hash(uv / max(uTexel.x, 1e-5) * 0.5 + fract(uTime) * 371.7) - 0.5;
-      col += g * uGrain;
+      float grainWeight = smoothstep(0.03, 0.34, luma) * (1.0 - smoothstep(0.55, 1.0, luma));
+      col += g * uGrain * grainWeight;
 
       col = mix(col, vec3(1.0), uWhite);
       col *= (1.0 - uFade);

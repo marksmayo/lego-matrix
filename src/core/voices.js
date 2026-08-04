@@ -50,6 +50,17 @@ export class Voices {
     this.voices = [];
     this.picked = new Map();
     this.lastSpoken = null;
+    this.pending = null;
+    this.spoken = [];      // diagnostics: every line actually handed to the synth
+    this.failures = [];
+    /*
+     * How a cancelled-then-replaced utterance is handed over. Chrome drops an
+     * utterance passed to speak() in the same task as a cancel(), so in the
+     * browser this has to cross a tick. Injectable so the delivery test can
+     * run the whole timeline synchronously.
+     */
+    this.schedule = (fn) => setTimeout(fn, 40);
+    this.unschedule = (h) => clearTimeout(h);
   }
 
   init() {
@@ -115,32 +126,76 @@ export class Voices {
     let rate = (cast.rate + (note.rate || 0));
     let vol = (cast.vol + (note.vol || 0));
 
-    // Fit the line into its subtitle window: roughly 13 characters a second at
-    // rate 1. Never speed past 1.6 or the read stops being a performance.
     if (line.dur) {
-      const need = line.text.length / (line.dur * 13);
-      if (need > 1) rate *= Math.min(1.35, need);
+      // Fit the line into its subtitle window: roughly 15 characters a second
+      // at rate 1. Squeeze a long line toward
+      // its subtitle window, but never past 1.6 or the read stops being a
+      // performance and starts being an auctioneer.
+      const need = line.text.length / (line.dur * 15);
+      if (need > 1) rate *= Math.min(1.6, need);
     }
     // Voice-over is a phone line: thinner, and a touch quieter.
     if (line.style === 'vo') vol *= 0.9;
 
+    let u;
     try {
-      const u = new SpeechSynthesisUtterance(line.text);
+      u = new SpeechSynthesisUtterance(line.text);
       const v = this.voiceFor(who);
       if (v) { u.voice = v; u.lang = v.lang; }
       u.pitch = Math.max(0.1, Math.min(2, pitch));
       u.rate = Math.max(0.4, Math.min(1.9, rate));
       u.volume = Math.max(0, Math.min(1, vol));
-      speechSynthesis.speak(u);
-      this.lastSpoken = line;
-    } catch { /* a browser without speech is not a failure */ }
+      u.onerror = () => { this.failures.push(who); };
+    } catch { return; }
+
+    /*
+     * speak() QUEUES. That is the whole bug this guards against: in a scene
+     * where lines land every second and a half, each utterance waits for the
+     * one before it to finish, the queue runs further and further behind the
+     * picture, and the scene change then cancels everything still waiting —
+     * so the last few characters in a dense scene simply never speak. It was
+     * why the Lieutenant's rant and Trinity's whole phone call were silent.
+     *
+     * Only one line is ever on screen, so only one should ever be in the air.
+     */
+    this.enqueue(u, line);
+  }
+
+  enqueue(u, line) {
+    if (this.pending !== null) this.unschedule(this.pending);
+    try {
+      if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
+      // Chrome can leave the queue in a paused state after a cancel, and then
+      // every later utterance is accepted and silently never spoken.
+      speechSynthesis.resume();
+    } catch { /* ignore */ }
+
+    this.pending = this.schedule(() => {
+      this.pending = null;
+      try {
+        speechSynthesis.speak(u);
+        this.lastSpoken = line;
+        this.spoken.push(line.who || '?');
+      } catch { /* a browser without speech is not a failure */ }
+    });
   }
 
   /** Stop mid-word — on pause, on a scrub, on a scene change. */
   cancel() {
     if (!this.ok) return;
-    try { speechSynthesis.cancel(); } catch { /* ignore */ }
+    if (this.pending !== null) this.unschedule(this.pending);
+    this.pending = null;
+    try { speechSynthesis.cancel(); speechSynthesis.resume(); } catch { /* ignore */ }
     this.lastSpoken = null;
+  }
+
+  /** Who has actually been given a voice, and with which installed voice. */
+  casting() {
+    return Object.keys(CAST).map((who) => ({
+      who,
+      voice: this.voiceFor(who)?.name || '(browser default)',
+      ...CAST[who],
+    }));
   }
 
   setMuted(m) {

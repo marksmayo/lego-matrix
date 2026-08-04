@@ -180,7 +180,7 @@ export default {
     const tracers = new Tracers(group, { pool: 34 });
     const flashes = new Flashes(group, { pool: 12 });
     const sparks = new Sparks(group, { max: 620, size: 0.26 });
-    const smoke = new Smoke(group, { pool: 16, color: 0x7c837c, size: 6 });
+    const smoke = new Smoke(group, { pool: 8, color: 0x7c837c, size: 5 });
     const rand = rng(808);
 
     const braceletPair = cuffs();
@@ -592,7 +592,7 @@ export default {
               vel: [10, 6, 8], spread: 14, spin: 16, life: 10,
             });
             for (let i = 0; i < 3; i++) {
-              smoke.puff(new THREE.Vector3(10 + i * 2, 3 + i, 13), { dur: 5, size: 6, vy: 1.1, opacity: 0.26 });
+              smoke.puff(new THREE.Vector3(10 + i * 2, 3 + i, 13), { dur: 4.5, size: 6, vy: 1.1, opacity: 0.11 });
             }
           }
         });
@@ -825,10 +825,10 @@ export default {
         cues.at(27.8, 'torchStop', (skip) => { if (!skip) c.audio.clatter(2, 0.5, 0.06); });
 
         /* ---------- residue ---------- */
-        if (!frozen && t > 4.5 && t < 25 && Math.random() < dt * 4) {
+        if (!frozen && t > 4.5 && t < 25 && Math.random() < dt * 0.9) {
           smoke.puff(
             new THREE.Vector3((Math.random() - 0.5) * 22, 2 + Math.random() * 6, Math.random() * 14),
-            { dur: 7, size: 7, vy: 0.7, opacity: 0.09, spread: 0.7 },
+            { dur: 4.5, size: 6, vy: 0.7, opacity: 0.05, spread: 0.7 },
           );
         }
         set.copProps.forEach((p, i) => {

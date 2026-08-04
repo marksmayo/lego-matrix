@@ -47,7 +47,7 @@ export default {
     const set = hotelSet();
     const group = new THREE.Group();
     const cues = new Cues();
-    const smoke = new Smoke(group, { pool: 14, color: 0x6a7068, size: 7 });
+    const smoke = new Smoke(group, { pool: 8, color: 0x6a7068, size: 5 });
     const sparks = new Sparks(group, { max: 260, size: 0.3 });
     const target = new THREE.Vector3();
 
@@ -137,7 +137,7 @@ export default {
           });
           for (let i = 0; i < 3; i++) {
             smoke.puff(new THREE.Vector3((Math.random() - 0.5) * 5, 2 + i * 2, 14 - i), {
-              dur: 4.5, size: 6, vy: 1.4, opacity: 0.3,
+              dur: 4.5, size: 6, vy: 1.4, opacity: 0.11,
             });
           }
         });

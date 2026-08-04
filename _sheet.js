@@ -41,6 +41,10 @@ const SHOTS = q.get('shots')
   : DEFAULT_SHOTS;
 const COLS = Number(q.get('cols') || 4);
 const FLAT = q.get('flat') === '1';
+// Isolation switches, for working out which pass is fogging the frame.
+const NO_SPRITE = q.get('nosprite') === '1';
+const NO_GRAIN = q.get('nograin') === '1';
+const NO_FOG = q.get('nofog') === '1';
 const CW = Number(q.get('w') || 480), CH = Math.round(CW * 9 / 16);
 
 const out = document.getElementById('out');
@@ -155,6 +159,9 @@ SHOTS.forEach((t, n) => {
     physics.step(STEP);
   }
   post.u.uFade.value = insts[i].fade ?? 0;
+  if (NO_SPRITE) scene.traverse((o) => { if (o.isSprite) o.visible = false; });
+  if (NO_GRAIN) post.u.uGrain.value = 0;
+  if (NO_FOG) scene.fog = null;
   if (FLAT) {
     // Technical pass: kill the grade and flood the set, so framing can be
     // judged separately from lighting. Applied after update(), because that's

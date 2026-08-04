@@ -74,7 +74,7 @@ export default {
     const cues = new Cues();
     const target = new THREE.Vector3();
     const sparks = new Sparks(group, { max: 700, size: 0.28 });
-    const smoke = new Smoke(group, { pool: 26, color: 0x9a9a92, size: 10 });
+    const smoke = new Smoke(group, { pool: 10, color: 0x9a9a92, size: 6 });
     const rand = rng(1109);
 
     /* ---------------- the block ---------------- */
@@ -206,7 +206,7 @@ export default {
         sparks.reset();
         wreck.done = false;
         lastRing = -1;
-        c.scene.fog = new THREE.FogExp2(0x090f14, 0.0007);
+        c.scene.fog = new THREE.FogExp2(0x090f14, 0.0004);
         c.post.u.uGreen.value = 0.16;
         c.post.u.uVignette.value = 1.1;
         c.post.bloom.strength = 0.468;
@@ -365,7 +365,7 @@ export default {
           });
           for (let i = 0; i < 4; i++) {
             smoke.puff(new THREE.Vector3((rand() - 0.5) * 8, 1 + rand() * 5, -18 + rand() * 4), {
-              dur: 6, size: 6, vy: 1.5, opacity: 0.1, spread: 2.0,
+              dur: 4.5, size: 6, vy: 1.5, opacity: 0.055, spread: 2.0,
             });
           }
           // One green pulse where she was. Then nothing.
@@ -444,9 +444,9 @@ export default {
         cues.at(28.4, 'smile', (skip) => { if (!skip) c.audio.pulse(0.34); });
 
         /* ---------- residue ---------- */
-        if (t > 17.6 && t < 26 && Math.random() < dt * 5) {
+        if (t > 17.6 && t < 26 && Math.random() < dt * 0.9) {
           smoke.puff(new THREE.Vector3((Math.random() - 0.5) * 16, 0.6 + Math.random() * 3, -16 + Math.random() * 6), {
-            dur: 9, size: 7, vy: 0.6, opacity: 0.05, spread: 1.0,
+            dur: 4.5, size: 6, vy: 0.6, opacity: 0.028, spread: 1.0,
           });
         }
         c.post.u.uWhite.value *= Math.pow(0.0015, dt);

@@ -41,7 +41,7 @@ export default {
     const group = new THREE.Group();
     const cues = new Cues();
     const target = new THREE.Vector3();
-    const smoke = new Smoke(group, { pool: 12, color: 0x7a827a, size: 7 });
+    const smoke = new Smoke(group, { pool: 6, color: 0x7a827a, size: 5 });
     const rand = rng(6161);
 
     /* ---------------- the aftermath, made permanent ---------------- */
@@ -130,9 +130,9 @@ export default {
         torches.forEach((x, i) => {
           x.beam.intensity = 600 * (i ? 0.9 + 0.1 * noise1(t * 2 + i) : 0.55 + 0.45 * Math.abs(noise1(t * 9)));
         });
-        if (Math.random() < dt * 1.1) {
+        if (Math.random() < dt * 0.4) {
           smoke.puff(new THREE.Vector3(-6 + Math.random() * 16, 1.5, 4 + Math.random() * 10), {
-            dur: 8, size: 8, vy: 0.5, opacity: 0.07, spread: 0.5,
+            dur: 4.5, size: 6, vy: 0.5, opacity: 0.039, spread: 0.5,
           });
         }
 

@@ -61,7 +61,7 @@ export default {
     const cues = new Cues();
     const target = new THREE.Vector3();
     const sparks = new Sparks(group, { max: 400, size: 0.3 });
-    const smoke = new Smoke(group, { pool: 14, color: 0x8f9a9e, size: 10 });
+    const smoke = new Smoke(group, { pool: 6, color: 0x8f9a9e, size: 6 });
     const rand = rng(1717);
 
     /* ---------------- the plateaued landscape ---------------- */
@@ -276,7 +276,7 @@ export default {
           sparks.emit(new THREE.Vector3(99, 44.4, 1), 26, {
             speed: 16, color: [0.6, 0.6, 0.55], ttl: 0.6, up: 0.5,
           });
-          smoke.puff(new THREE.Vector3(99, 44.6, 1), { dur: 3, size: 8, vy: 1.4, opacity: 0.22 });
+          smoke.puff(new THREE.Vector3(99, 44.6, 1), { dur: 3, size: 6, vy: 1.4, opacity: 0.11 });
         });
 
         /* ---------- Agent Brown ---------- */
